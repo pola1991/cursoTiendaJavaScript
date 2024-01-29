@@ -1,25 +1,37 @@
 const menuEmail= document.querySelector('.navbar-email');
-const desktopMenu= document.querySelector('.desktop-menu');
+const desktopProfileMenu= document.querySelector('.desktop-menu');
 const mobileMenu= document.querySelector('.mobile-menu');
 const burguerIcon= document.querySelector('.menu');
 const shoppingCart = document.querySelector('.navbar-shopping-cart');
 const productDetail = document.querySelector('#product-detail');
+const openProductDetail = document.querySelector('.product-detail')
+const closeProductDetail = document.querySelector('.product-detail-close')
 
 
 menuEmail.addEventListener('click', ToggleDesktopMenu);
 burguerIcon.addEventListener('click', ToggleMobileMenu);
 shoppingCart.addEventListener('click', ToggleShoppingCart);
+closeProductDetail.addEventListener('click', closeProductDetailClick)
+
+
 
 
 /*Funcion Menu escritorio*/
 function ToggleDesktopMenu() {
   const carritoClosed = productDetail.classList.contains('inactive')
 
-  desktopMenu.classList.toggle('inactive');
-  if (!carritoClosed){
+  desktopProfileMenu.classList.toggle('inactive');
+  
+  /* Si el carrito esta abierto se cierra */
+  if (!carritoClosed ){
     productDetail.classList.add('inactive');
+    
 
+  }else{
+    openProductDetail.classList.add('inactive')
   }
+
+ 
 }
 
 /* Funcion menu Mobile*/ 
@@ -30,6 +42,9 @@ function ToggleMobileMenu() {
 
   if (!carritoClosed){
     productDetail.classList.add('inactive');
+
+  }else{
+    openProductDetail.classList.add('inactive')
 
   }
 
@@ -44,10 +59,18 @@ function ToggleShoppingCart() {
   productDetail.classList.toggle('inactive');
   
   if (!menuMobileClosed){
-    mobileMenu.classList.add('inactive')
+    mobileMenu.classList.add('inactive');
+   
+  }
+  if (menuMobileClosed){
+    
+    openProductDetail.classList.add('inactive');
+
   }
 
 };
+
+
 
 
 //Tipo base de datos
@@ -94,14 +117,19 @@ productsList.push({
 
 //Función para que se pueda pasar quizas otro array que tengamos diferentes productos y no estar determinado a solo un array en especifico
 function renderProducts(array) {
-  for (product of array){
+  for (const product of array){
     const cardsContainer= document.querySelector('.cards-container')
     
     const productCardDiv = document.createElement('div');
     productCardDiv.classList.add('product-card');
 
     const image = document.createElement('img');
+    image.style.cursor= 'pointer';
     image.setAttribute('src', product.image);
+
+    image.addEventListener('click', function() {
+      openDetails(product); // Pasar directamente el producto a openDetails
+    });
 
     const productInfo= document.createElement('div');
     productInfo.classList.add('product-info');
@@ -127,11 +155,36 @@ function renderProducts(array) {
     productCardDiv.appendChild(productInfo);
 
     cardsContainer.appendChild(productCardDiv);
-    
+    console.log(product)
   }
 }
 
 renderProducts(productsList);
 
+function openDetails(product) {
+  selectProduct(product);
+  openProductDetail.classList.remove('inactive')
 
- 
+}
+
+
+//Seleccion de producto ver id
+function selectProduct(product) {
+  const selectedImage = openProductDetail.querySelector('.selectedImage');
+  const productInfo = openProductDetail.querySelector('.product-info');
+
+  // Actualizar la imagen, precio y nombre del producto
+  selectedImage.setAttribute('src', product.image);
+  productInfo.children[0].textContent = '$' + product.price;
+  productInfo.children[1].textContent = product.name;
+
+  // Mostrar los detalles del producto
+  openProductDetail.classList.remove('inactive');
+}
+
+
+
+function closeProductDetailClick() {
+  openProductDetail.classList.add('inactive')
+}
+
